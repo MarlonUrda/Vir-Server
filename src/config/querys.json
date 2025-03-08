@@ -1,0 +1,4 @@
+{
+  "get-files": "SELECT * FROM files",
+  "insert-file": "INSERT INTO files (filename, filePath) VALUES ($1, $2)"
+}
