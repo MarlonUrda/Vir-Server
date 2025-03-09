@@ -18,6 +18,7 @@ const handleUpload = async (
   filePath: string,
   connection: FtpConnection
 ): Promise<void> => {
+  console.log(`Received file: ${filePath}`);
   const fileName = path.basename(filePath);
 
   try {
@@ -37,21 +38,18 @@ const handleUpload = async (
 export const startFTP = async (): Promise<void> => {
   verifyExistingDirectory();
 
-  console.log(saveDirectory);
-
   const ftp = new FtpServer({
     url: process.env.FTP_URL,
     anonymous: true,
   });
 
   ftp.on("login", ({ connection, username }, resolve, reject) => {
-
     resolve({ root: saveDirectory });
 
     connection.on("STOR", (error, fileName) => {
-      console.log(fileName);
+      console.log("s", fileName);
 
-      handleUpload(saveDirectory, connection);
+      handleUpload(fileName, connection);
     });
   });
 

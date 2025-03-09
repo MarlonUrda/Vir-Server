@@ -5,22 +5,13 @@ import * as fs from "fs";
 
 configDotenv();
 
-const DbConfig = {
-  host: process.env.DB_HOST,
-  port: parseInt(process.env.DB_PORT || "5432"),
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_DATABASE,
-};
-
 class Db {
   private client: Client;
   private querys: { [key: string]: string } = {};
 
   constructor(queriesFilePath: string) {
     this.client = new Client({
-      connectionString:
-        "postgresql://postgres:123456789@localhost:5432/seguridad",
+      connectionString: process.env.DB_STRING,
     });
     this.loadQuerys(queriesFilePath);
   }
@@ -55,7 +46,7 @@ class Db {
 
     try {
       if (args.length === 0 || args === undefined) {
-        const result = await this.client.query(query);
+        const result = await this.client.query(queryKey);
         return result.rows;
       }
       const result = await this.client.query(queryKey, ...args);

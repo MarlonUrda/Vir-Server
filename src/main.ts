@@ -12,7 +12,6 @@ const initialize = async () => {
   tcp.start();
   await startFTP();
   await db.connect();
-  await db.query("get-files");
 };
 
 initialize();
