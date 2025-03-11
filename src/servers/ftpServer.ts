@@ -28,10 +28,6 @@ const handleUpload = async (
   } catch (err) {
     console.error(`Error uploading file: ${err}`);
     connection.close(550, 21);
-  } finally {
-    if (fs.existsSync(filePath) && fs.lstatSync(filePath).isFile()) {
-      fs.unlinkSync(filePath);
-    }
   }
 };
 
@@ -40,17 +36,24 @@ export const startFTP = async (): Promise<void> => {
 
   const ftp = new FtpServer({
     url: process.env.FTP_URL,
+    pasv_url: process.env.FTP_PASV_URL,
     anonymous: true,
   });
 
   ftp.on("login", ({ connection, username }, resolve, reject) => {
-    resolve({ root: saveDirectory });
+    console.log(connection.ip);
 
     connection.on("STOR", (error, fileName) => {
       console.log("s", fileName);
 
+      if (error) {
+        console.log(error);
+        throw new Error(error);
+      }
+
       handleUpload(fileName, connection);
     });
+    resolve({ root: saveDirectory });
   });
 
   try {
